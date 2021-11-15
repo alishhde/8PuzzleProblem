@@ -9,7 +9,7 @@ class FormedInformed():
     def ucsAlgorithm(self):
         pass
     
-    def greedyAlgorithm(self, spaceState, initialState, frontier=None, expanded=None, GraphSearch=True):
+    def greedyAlgorithm(self, spaceState, initialState=None, frontier=None, expanded=None, GraphSearch=True):
         """
         This method is going to calculate the greedy algorithm. Each time you call this method,
         it define one best next node. So you must repeat calling this method to reach the Goal,
@@ -29,14 +29,30 @@ class FormedInformed():
         # If we don't want to expand the nodes that are expanded, else Tree search
         if GraphSearch:
             
-            if initialState not in spaceState:
+            if initialState == None:
                 return False    # If initial state is empty
             else:
+                currentState = initialState
                 
-                pass
-        
+                # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
+                next_states = self.nextStates(currentState)
+                
+                # now we must find these nodes cost and choose the node that has lowest cost
+                
+                #Continue fromm here...
+                
+                
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
             pass
-        
+    
+    def nextStates(self, currentState, Problem="8Puzzle"):
+        """
+        as we are solving 8 puzzle, we describe it here,
+            1- First we must find the space in the 8 puzzle.
+            2- then we must find the nodes that can change their place,
+            3- then we must return these nodes that can move
+        """
+        pass
+    
     def _cost(self, heuristic="NumberOfNotInPlace"):
         pass
