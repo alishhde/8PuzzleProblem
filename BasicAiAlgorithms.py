@@ -24,6 +24,11 @@ class FormedInformed():
             expanded ([List]): This is also a list of the nodes or states that we have expanded. Defaults to None.
             GraphSearch (bool, optional): This argument define to use the expanded list in our program or not. if this 
                         argument is False then we also change the states that also we have expanded them.
+
+        In this method we first create a currentState variable from the initialState, we call the nextStates() method with this variable,
+        this mthod will return all the possible states we can have for our next state. 
+        After we have defined the next states, we must choose the state which has the lowest cost. the cost of each states compute by the 
+        heuristic() method
         """
         
         # If we don't want to expand the nodes that are expanded, else Tree search
@@ -37,11 +42,13 @@ class FormedInformed():
                 # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
                 next_states = self.nextStates(currentState)
                 
-                # now we must find these nodes cost and choose the node that has lowest cost
-                
-                #Continue fromm here...
-                
-                
+                # now we must find these node's cost and choose the node that has lowest cost
+                heuristicValues = dict()
+                for state in next_states:
+                    keyCost = _cost(state).append()
+                    heuristicValues[int(keyCost)] = state
+                nextStateIs = heuristicValues[min(heuristicValues.keys())]
+                return nextStateIs
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
             pass
     
@@ -54,5 +61,10 @@ class FormedInformed():
         """
         pass
     
-    def _cost(self, heuristic="NumberOfNotInPlace"):
+    def _cost(self, heuristic="NumberOfMissPlace"):
+        """This method is going to compute the cost of the givven state.
+
+        Args:
+            heuristic (str, optional): This choose which heuristic method to use. Here we only have NumberOfMissPlace as cost.
+        """
         pass
