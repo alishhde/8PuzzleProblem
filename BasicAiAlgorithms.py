@@ -43,7 +43,7 @@ class FormedInformed():
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
                 for state in next_states:
-                    keyIsCost = _cost(state, goalState)
+                    keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                     heuristicValues[int(keyIsCost)] = state
                 nextStateIs = heuristicValues[min(heuristicValues.keys())]
                 return nextStateIs
@@ -111,10 +111,23 @@ class FormedInformed():
                 next_states.append(newstate)
             return next_states
                 
-    def _cost(self, heuristic="NumberOfMissPlace"):
+    def _cost(self, state, goalState, heuristic="NumberOfMissPlace"):
         """This method is going to compute the cost of the givven state.
-
         Args:
+            state (List): It is a list that consist of the 3 list in which we have the values as our problem is 8 puzzle.
+            goalState (List):  It is a list that consist of the 3 list in which we have the values as our problem is 8 puzzle.
             heuristic (str, optional): This choose which heuristic method to use. Here we only have NumberOfMissPlace as cost.
+            
+            as both state and goalState must have the same structure, so we only need to compare the value of the same in index
+            in each list.
         """
-        pass
+        if heuristic == "NumberOfMissPlace":
+            """ What we have in this heuristic is the number of the numbers in state that are
+            not in their right place as that number is in goalstate.
+            """
+            missplace = 0
+            for row in range(len(state)):
+                for col in  range(len(state)):
+                    if state[row][col] != goalstate[row][col]:
+                        missplace += 1
+            
