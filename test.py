@@ -22,12 +22,15 @@
 # print(f"This is available moves: {availableMoveForSpace[0][0]}")
 
 
-heuristicValues = {
-    1: "num 1",
-    2: "num 2",
-    0: "num 3"
-}
+goalState = [
+                [1, 2, 3],
+                [8, " ", 4], 
+                [7, 6, 5]
+            ]
 
-
-nextStateIs = heuristicValues[min(heuristicValues.keys())]
-print(nextStateIs)
+t = [
+                [1, 2, 3],
+                [8, " ", 4], 
+                [7, 6, 5]
+            ]
+print(t)

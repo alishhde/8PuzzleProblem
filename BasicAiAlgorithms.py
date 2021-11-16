@@ -1,5 +1,5 @@
 class FormedInformed():
-    def __init__(self, algorithm):
+    def __init__(self):
         pass
     
     def aStarAlgorithm(self):
@@ -8,13 +8,14 @@ class FormedInformed():
     def ucsAlgorithm(self):
         pass
     
-    def greedyAlgorithm(self, flag, spaceState=None, initialState=None, goalState=None, frontier=None, expanded=None, expanded_node=None, GraphSearch=True):
+    def greedyAlgorithm(self, flag, spaceState=[], initialState=[], goalState=[], frontier=[], expanded=[], expanded_node=[], GraphSearch=True):
         """
         This method is going to calculate the greedy algorithm. Each time you call this method,
         it define one best next node. So you must repeat calling this method to reach the Goal,
         and you must test the goal in your code after you call this function.
 
         Args:
+            flag (Bool): the first time method call, this must be True
             spaceState (a of List two list): This argument is a sequence of all the  states and their costs.
                         first list must be the nodes and the second list must be the cost, we do not use it 
                         here as we are solving 8 puzzle problem.
@@ -42,11 +43,14 @@ class FormedInformed():
                     return False    # If initial state is empty
                 else:
                     # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
-                    frontier.append(self.findNextStates(expanded_node)) # here we are expanding node with lowest cost
+                    frontier.append(self.findNextStates(expanded_node, expanded, frontier)) # here we are expanding node with lowest cost
+                    # print(frontier, "Thisis line 47", sep="===>" )
                     
                     # now we must find these node's cost and choose the node that has lowest cost
                     heuristicValues = dict()
-                    for state in frontier:
+                    # print("This is frontier line 79 : ", frontier)
+                    for state in frontier[0]:
+                        # print("this state line 82", state)
                         keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                         heuristicValues[int(keyIsCost)] = state
                     nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
@@ -54,6 +58,11 @@ class FormedInformed():
                     if nextStateIs not in expanded:
                         expanded.append(nextStateIs)
                         expanded_node = nextStateIs
+                        # print("This is frontier", frontier)
+                        # print(nextStateIs)
+                        indexState = frontier[0].index(nextStateIs)
+                        del frontier[0][indexState]
+                        
                     else:
                         while nextStateIs in expanded:
                             del heuristicValues[min(heuristicValues.keys())]
@@ -61,6 +70,8 @@ class FormedInformed():
                         else:
                             expanded.append(nextStateIs)
                             expanded_node = nextStateIs
+                            indexState = frontier.index(nextStateIs)
+                            del frontier[indexState]
                             
                     return frontier, expanded, expanded_node
             else:
@@ -69,7 +80,9 @@ class FormedInformed():
                 
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
+                # print("This is frontier line 79 : ", frontier)
                 for state in frontier:
+                    # print("this state line 82", state)
                     keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                     heuristicValues[int(keyIsCost)] = state
                 nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
@@ -77,27 +90,34 @@ class FormedInformed():
                 if nextStateIs not in expanded:
                     expanded.append(nextStateIs)
                     expanded_node = nextStateIs
+                    indexState = frontier.index(nextStateIs)
+                    del frontier[indexState]
                 else:
                     while nextStateIs in expanded:
                         del heuristicValues[min(heuristicValues.keys())]
+                        # print("line 98, this is heuristicValues.keys()", heuristicValues.keys())
                         nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
                     else:
                         expanded.append(nextStateIs)
                         expanded_node = nextStateIs
+                        indexState = frontier.index(nextStateIs)
+                        del frontier[indexState]
                         
-                return initialState, goalState=None, frontier=None, expanded=None, expanded_node=None, GraphSearch=True
+                return frontier, expanded, expanded_node
             
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
             pass
     
-    def findNextStates(self, currentState, expanded, frontier, problem="8Puzzle"):
+    def findNextStates(self, currentState, expanded, frontier, problem="eightPuzzle"):
         """
         as we are solving 8 puzzle, we describe it here,
             1- First we must find the space in the 8 puzzle.
             2- then we must find the nodes that can change their place,
             3- then we must return these nodes that can move
         """
-        if problem.lower() == "8Puzzle":
+        # print("Here")
+        if problem == "eightPuzzle":
+            # print("This Here")
             """In 8 puzzle problem, we have a list consist of 3 list each consist of three values e.g.
                 [
                     [1, 2, 3],
@@ -110,6 +130,7 @@ class FormedInformed():
             # 1- We look for the space in the currentState
             rowCounter = 0
             columnCounter = 0
+            flag = False
             for eachrow in currentState:
                 for value in eachrow:
                     if value == " ":
@@ -122,8 +143,10 @@ class FormedInformed():
                     columnCounter += 1
                 if flag:
                     flag = False
-                    break                    
+                    break
+                columnCounter = 0
                 rowCounter += 1
+            # print(spaceIndex, "This is space Index", sep=" ===>  ")
             
             # 2- In the next lines we are going to add all the possible state's index
             availableMoveIndexForSpace = list()
@@ -139,14 +162,17 @@ class FormedInformed():
                 
             if (columnCounter + 1) in domain:
                 availableMoveIndexForSpace.append((rowCounter, columnCounter + 1))    
+            # print(availableMoveIndexForSpace, "This is available move ", sep=" ==> ")
             
             # 3- Now we must create those states and return all thenext states we have
             from copy import deepcopy
             next_states = [] # each value of this list is complete state
+            # print("This is line 162 availableMoveIndexForSpace: ", availableMoveIndexForSpace)
             for moveIndex in availableMoveIndexForSpace:
                 # Here we must change the space and the number
                 newstate = []
                 newstate = deepcopy(currentState)
+                # print("this is 166", moveIndex[0], moveIndex[1])
                 newstate[rowCounter][columnCounter], newstate[moveIndex[0]][moveIndex[1]] = newstate[moveIndex[0]][moveIndex[1]], newstate[rowCounter][columnCounter]
                 if newstate in expanded or newstate in frontier:
                     continue
@@ -168,9 +194,10 @@ class FormedInformed():
             """ What we have in this heuristic is the number of the numbers in state that are
             not in their right place as that number is in goalstate.
             """
+            # print("This is line 182",state, sep="==> ")
             missplace = 0
             for row in range(len(state)):
                 for col in  range(len(state)):
-                    if state[row][col] != goalstate[row][col]:
+                    if state[row][col] != goalState[row][col]:
                         missplace += 1
             return missplace
