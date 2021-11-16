@@ -33,15 +33,12 @@ class FormedInformed():
         
         # If we don't want to expand the nodes that are expanded, else Tree search
         if GraphSearch:
-            
             if initialState == None:
                 return False    # If initial state is empty
             else:
                 currentState = initialState
-                
                 # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
-                next_states = self.nextStates(currentState)
-                
+                next_states = self.findNextStates(currentState)
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
                 for state in next_states:
@@ -52,15 +49,60 @@ class FormedInformed():
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
             pass
     
-    def nextStates(self, currentState, Problem="8Puzzle"):
+    def findNextStates(self, currentState, problem="8Puzzle"):
         """
         as we are solving 8 puzzle, we describe it here,
             1- First we must find the space in the 8 puzzle.
             2- then we must find the nodes that can change their place,
             3- then we must return these nodes that can move
         """
-        pass
-    
+        if problem.lower() == "8Puzzle":
+            """In 8 puzzle problem, we have a list consist of 3 list each consist of three values e.g.
+                [
+                    [1, 2, 3],
+                    [8, " ", 4], 
+                    [7, 6, 5]
+                ] 
+                In this problem 1- we must find the space and 2- look for the numbers that can change their place
+                with space and return those states.
+            """
+            # 1- We look for the space in the currentState
+            rowCounter = 0
+            columnCounter = 0
+            for eachrow in currentState:
+                for value in eachrow:
+                    if value == " ":
+                        """
+                            Now we must find this value's index
+                        """
+                        spaceIndex = [rowCounter, columnCounter]
+                        flag = True # says we must to break
+                        break
+                    columnCounter += 1
+                if flag:
+                    flag = False
+                    break                    
+                rowCounter += 1
+            
+            # 2- In the next lines we are going to add all the possible state's index
+            availableMoveIndexForSpace = list()
+            domain = [0, 1, 2]
+            if (rowCounter - 1) in domain:
+                availableMoveIndexForSpace.append((rowCounter - 1, columnCounter))
+
+            if (rowCounter + 1) in domain:
+                availableMoveIndexForSpace.append((rowCounter + 1, columnCounter))
+
+            if (columnCounter - 1) in domain:
+                availableMoveIndexForSpace.append((rowCounter, columnCounter - 1))
+                
+            if (columnCounter + 1) in domain:
+                availableMoveIndexForSpace.append((rowCounter, columnCounter + 1))    
+            
+            # 3- Now we must create those states and return all thenext states we have
+            for moveIndex in availableMoveIndexForSpace:
+                # Here we must change the space and the number
+                pass
     def _cost(self, heuristic="NumberOfMissPlace"):
         """This method is going to compute the cost of the givven state.
 
