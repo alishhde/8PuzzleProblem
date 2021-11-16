@@ -8,7 +8,7 @@ class FormedInformed():
     def ucsAlgorithm(self):
         pass
     
-    def greedyAlgorithm(self, spaceState=None, initialState=None, goalState=None, frontier=None, expanded=None, expanded_node=None, GraphSearch=True):
+    def greedyAlgorithm(self, flag, spaceState=None, initialState=None, goalState=None, frontier=None, expanded=None, expanded_node=None, GraphSearch=True):
         """
         This method is going to calculate the greedy algorithm. Each time you call this method,
         it define one best next node. So you must repeat calling this method to reach the Goal,
@@ -34,14 +34,38 @@ class FormedInformed():
         
         # If we don't want to expand the nodes that are expanded, else Tree search
         if GraphSearch:
-            expanded_node = list()
-            expanded.append(initialState)
-            expanded_node = initialState
-            if frontier == None:
-                return False    # If initial state is empty
+            if flag:
+                expanded_node = list()
+                expanded.append(initialState)
+                expanded_node = initialState
+                if frontier == None:
+                    return False    # If initial state is empty
+                else:
+                    # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
+                    frontier.append(self.findNextStates(expanded_node)) # here we are expanding node with lowest cost
+                    
+                    # now we must find these node's cost and choose the node that has lowest cost
+                    heuristicValues = dict()
+                    for state in frontier:
+                        keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
+                        heuristicValues[int(keyIsCost)] = state
+                    nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
+                    
+                    if nextStateIs not in expanded:
+                        expanded.append(nextStateIs)
+                        expanded_node = nextStateIs
+                    else:
+                        while nextStateIs in expanded:
+                            del heuristicValues[min(heuristicValues.keys())]
+                            nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
+                        else:
+                            expanded.append(nextStateIs)
+                            expanded_node = nextStateIs
+                            
+                    return frontier, expanded, expanded_node
             else:
                 # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
-                frontier = self.findNextStates(expanded_node) # here we are expanding node with lowest cost
+                frontier.append(self.findNextStates(expanded_node, expanded, frontier)) # here we are expanding node with lowest cost
                 
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
@@ -60,11 +84,13 @@ class FormedInformed():
                     else:
                         expanded.append(nextStateIs)
                         expanded_node = nextStateIs
-                return nextStateIs
+                        
+                return initialState, goalState=None, frontier=None, expanded=None, expanded_node=None, GraphSearch=True
+            
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
             pass
     
-    def findNextStates(self, currentState, problem="8Puzzle"):
+    def findNextStates(self, currentState, expanded, frontier, problem="8Puzzle"):
         """
         as we are solving 8 puzzle, we describe it here,
             1- First we must find the space in the 8 puzzle.
@@ -122,7 +148,10 @@ class FormedInformed():
                 newstate = []
                 newstate = deepcopy(currentState)
                 newstate[rowCounter][columnCounter], newstate[moveIndex[0]][moveIndex[1]] = newstate[moveIndex[0]][moveIndex[1]], newstate[rowCounter][columnCounter]
-                next_states.append(newstate)
+                if newstate in expanded or newstate in frontier:
+                    continue
+                else:
+                    next_states.append(newstate)
             return next_states
                 
     def _cost(self, state, goalState, heuristic="NumberOfMissPlace"):

@@ -1,4 +1,6 @@
-import BasicAiAlgorithms
+import BasicAiAlgorithms as bi
+
+
 
 
 
