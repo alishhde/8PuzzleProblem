@@ -1,4 +1,3 @@
-
 class FormedInformed():
     def __init__(self, algorithm):
         pass
@@ -9,7 +8,7 @@ class FormedInformed():
     def ucsAlgorithm(self):
         pass
     
-    def greedyAlgorithm(self, spaceState, initialState=None, frontier=None, expanded=None, GraphSearch=True):
+    def greedyAlgorithm(self, spaceState=None, initialState=None, goalState=None, frontier=None, expanded=None, GraphSearch=True):
         """
         This method is going to calculate the greedy algorithm. Each time you call this method,
         it define one best next node. So you must repeat calling this method to reach the Goal,
@@ -17,9 +16,11 @@ class FormedInformed():
 
         Args:
             spaceState (a of List two list): This argument is a sequence of all the  states and their costs.
-                        first list must be the nodes and the second list must be the cost.
+                        first list must be the nodes and the second list must be the cost, we do not use it 
+                        here as we are solving 8 puzzle problem.
                         
             initialState ([List]): This argument is the start state, we start searching with this argument.
+            goalState ([List]): This a list consist of three list that each list has the value of a place in 8 puzzle.
             frontier ([List]): This is a list of the nodes or states that we must choose to expand.
             expanded ([List]): This is also a list of the nodes or states that we have expanded. Defaults to None.
             GraphSearch (bool, optional): This argument define to use the expanded list in our program or not. if this 
@@ -42,8 +43,8 @@ class FormedInformed():
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
                 for state in next_states:
-                    keyCost = _cost(state).append()
-                    heuristicValues[int(keyCost)] = state
+                    keyIsCost = _cost(state, goalState)
+                    heuristicValues[int(keyIsCost)] = state
                 nextStateIs = heuristicValues[min(heuristicValues.keys())]
                 return nextStateIs
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
@@ -100,9 +101,16 @@ class FormedInformed():
                 availableMoveIndexForSpace.append((rowCounter, columnCounter + 1))    
             
             # 3- Now we must create those states and return all thenext states we have
+            from copy import deepcopy
+            next_states = [] # each value of this list is complete state
             for moveIndex in availableMoveIndexForSpace:
                 # Here we must change the space and the number
-                pass
+                newstate = []
+                newstate = deepcopy(currentState)
+                newstate[rowCounter][columnCounter], newstate[moveIndex[0]][moveIndex[1]] = newstate[moveIndex[0]][moveIndex[1]], newstate[rowCounter][columnCounter]
+                next_states.append(newstate)
+            return next_states
+                
     def _cost(self, heuristic="NumberOfMissPlace"):
         """This method is going to compute the cost of the givven state.
 
