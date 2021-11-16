@@ -8,7 +8,7 @@ class FormedInformed():
     def ucsAlgorithm(self):
         pass
     
-    def greedyAlgorithm(self, firstRunFlag, spaceState=None, initialState=None, goalState=None, frontier=None, expanded=None, GraphSearch=True):
+    def greedyAlgorithm(self, spaceState=None, initialState=None, goalState=None, frontier=None, expanded=None, expanded_node=None, GraphSearch=True):
         """
         This method is going to calculate the greedy algorithm. Each time you call this method,
         it define one best next node. So you must repeat calling this method to reach the Goal,
@@ -26,7 +26,7 @@ class FormedInformed():
             GraphSearch (bool, optional): This argument define to use the expanded list in our program or not. if this 
                         argument is False then we also change the states that also we have expanded them.
 
-        In this method we first create a currentState variable from the initialState, we call the nextStates() method with this variable,
+        In this method we first create a frontier variable from the initialState, we call the nextStates() method with this variable,
         this mthod will return all the possible states we can have for our next state. 
         After we have defined the next states, we must choose the state which has the lowest cost. the cost of each states compute by the 
         heuristic() method
@@ -34,28 +34,32 @@ class FormedInformed():
         
         # If we don't want to expand the nodes that are expanded, else Tree search
         if GraphSearch:
-            if initialState == None:
+            expanded_node = list()
+            expanded.append(initialState)
+            expanded_node = initialState
+            if frontier == None:
                 return False    # If initial state is empty
             else:
-                
-                currentState = initialState
                 # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
-                next_states = self.findNextStates(currentState)
+                frontier = self.findNextStates(expanded_node) # here we are expanding node with lowest cost
+                
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
-                for state in next_states:
+                for state in frontier:
                     keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                     heuristicValues[int(keyIsCost)] = state
                 nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
                 
-                if currentState not in expanded:
-                    expanded.append(currentState)
                 if nextStateIs not in expanded:
                     expanded.append(nextStateIs)
+                    expanded_node = nextStateIs
                 else:
                     while nextStateIs in expanded:
                         del heuristicValues[min(heuristicValues.keys())]
                         nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
+                    else:
+                        expanded.append(nextStateIs)
+                        expanded_node = nextStateIs
                 return nextStateIs
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
             pass
