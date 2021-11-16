@@ -8,7 +8,7 @@ class FormedInformed():
     def ucsAlgorithm(self):
         pass
     
-    def greedyAlgorithm(self, spaceState=None, initialState=None, goalState=None, frontier=None, expanded=None, GraphSearch=True):
+    def greedyAlgorithm(self, firstRunFlag, spaceState=None, initialState=None, goalState=None, frontier=None, expanded=None, GraphSearch=True):
         """
         This method is going to calculate the greedy algorithm. Each time you call this method,
         it define one best next node. So you must repeat calling this method to reach the Goal,
@@ -37,6 +37,7 @@ class FormedInformed():
             if initialState == None:
                 return False    # If initial state is empty
             else:
+                
                 currentState = initialState
                 # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
                 next_states = self.findNextStates(currentState)
@@ -45,7 +46,16 @@ class FormedInformed():
                 for state in next_states:
                     keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                     heuristicValues[int(keyIsCost)] = state
-                nextStateIs = heuristicValues[min(heuristicValues.keys())]
+                nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
+                
+                if currentState not in expanded:
+                    expanded.append(currentState)
+                if nextStateIs not in expanded:
+                    expanded.append(nextStateIs)
+                else:
+                    while nextStateIs in expanded:
+                        del heuristicValues[min(heuristicValues.keys())]
+                        nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
                 return nextStateIs
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
             pass
@@ -130,4 +140,4 @@ class FormedInformed():
                 for col in  range(len(state)):
                     if state[row][col] != goalstate[row][col]:
                         missplace += 1
-            
+            return missplace
