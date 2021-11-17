@@ -58,9 +58,15 @@ class FormedInformed():
                         dictOfStates[frontier_index] = heuristicValues
                         heuristicValues = {}
                         frontier_index += 1
-                    print("This is heuristic dictionary: ", heuristicValues)
+                        
                     print("This is dictOfStates dictionary: ", dictOfStates)
                     
+                    firstmin = 10
+                    for firstDictKey in dictOfStates:
+                        for secDictKey_Cost in dictOfStates[firstDictKey]:
+                            if secDictKey_Cost < firstmin:
+                                firstmin = secDictKey_Cost
+                                minstate = dictOfStates[firstDictKey][secDictKey_Cost]
                     # nextStateIs = heuristicValues[min(heuristicValues.values())] # Here we choose the state which has lowest cost
                     
                     if nextStateIs not in expanded:
