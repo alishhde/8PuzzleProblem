@@ -43,14 +43,14 @@ class FormedInformed():
                     return False    # If initial state is empty
                 else:
                     # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
-                    frontier.append(self.findNextStates(expanded_node, expanded, frontier)) # here we are expanding node with lowest cost
+                    frontier = self.findNextStates(expanded_node, expanded, frontier) # here we are expanding node with lowest cost
                     # print(frontier, "Thisis line 47", sep="===>" )
                     
                     # now we must find these node's cost and choose the node that has lowest cost
                     heuristicValues = dict()
-                    # print("This is frontier line 79 : ", frontier)
-                    for state in frontier[0]:
-                        # print("this state line 82", state)
+                    print("This is frontier line 79 : ", frontier)
+                    for state in frontier:
+                        # print("this is state line 82", state)
                         keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                         heuristicValues[int(keyIsCost)] = state
                     nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
@@ -60,8 +60,8 @@ class FormedInformed():
                         expanded_node = nextStateIs
                         # print("This is frontier", frontier)
                         # print(nextStateIs)
-                        indexState = frontier[0].index(nextStateIs)
-                        del frontier[0][indexState]
+                        indexState = frontier.index(nextStateIs)
+                        del frontier[indexState]
                         
                     else:
                         while nextStateIs in expanded:
@@ -76,15 +76,15 @@ class FormedInformed():
                     return frontier, expanded, expanded_node
             else:
                 # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
-                frontier.append(self.findNextStates(expanded_node, expanded, frontier)) # here we are expanding node with lowest cost
+                frontier = self.findNextStates(expanded_node, expanded, frontier) # here we are expanding node with lowest cost
                 
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
-                # print("This is frontier line 79 : ", frontier)
+                print("This is frontier line 83 : ", frontier)
                 for state in frontier:
-                    # print("this state line 82", state)
                     keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                     heuristicValues[int(keyIsCost)] = state
+                print("line 98 This is our dictionary : ", heuristicValues)
                 nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
                 
                 if nextStateIs not in expanded:
@@ -174,11 +174,12 @@ class FormedInformed():
                 newstate = deepcopy(currentState)
                 # print("this is 166", moveIndex[0], moveIndex[1])
                 newstate[rowCounter][columnCounter], newstate[moveIndex[0]][moveIndex[1]] = newstate[moveIndex[0]][moveIndex[1]], newstate[rowCounter][columnCounter]
+                
                 if newstate in expanded or newstate in frontier:
                     continue
                 else:
-                    next_states.append(newstate)
-            return next_states
+                    frontier.append(newstate)
+            return frontier
                 
     def _cost(self, state, goalState, heuristic="NumberOfMissPlace"):
         """This method is going to compute the cost of the givven state.
