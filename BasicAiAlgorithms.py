@@ -48,12 +48,20 @@ class FormedInformed():
                     
                     # now we must find these node's cost and choose the node that has lowest cost
                     heuristicValues = dict()
-                    print("This is frontier line 79 : ", frontier)
+                    dictOfStates = dict()
+                    print("This is frontier line 51 : ", frontier)
+                    frontier_index = 0
                     for state in frontier:
-                        # print("this is state line 82", state)
+                        print("This is current state of frontier line 52", state)
                         keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                         heuristicValues[int(keyIsCost)] = state
-                    nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
+                        dictOfStates[frontier_index] = heuristicValues
+                        heuristicValues = {}
+                        frontier_index += 1
+                    print("This is heuristic dictionary: ", heuristicValues)
+                    print("This is dictOfStates dictionary: ", dictOfStates)
+                    
+                    # nextStateIs = heuristicValues[min(heuristicValues.values())] # Here we choose the state which has lowest cost
                     
                     if nextStateIs not in expanded:
                         expanded.append(nextStateIs)

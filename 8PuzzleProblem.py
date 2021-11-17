@@ -51,6 +51,7 @@ while goal != current:
         runflag = False
     else:
         algo.greedyAlgorithm(0, frontier=front, goalState=goal, expanded=expndd, expanded_node=expndd_node)
+        print("\nFrom now we are here ....\n")
         print("Goal:")
         for i in goal:
             print(i)
