@@ -1,6 +1,4 @@
 class FormedInformed():
-    def __init__(self):
-        pass
     
     def aStarAlgorithm(self):
         pass
@@ -295,6 +293,7 @@ class FormedInformed():
                     firstmin = secDictKey_Cost
                     minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
         nextStateIs = minstate # Here we choose the state which has lowest cost
+        nextStateCostIs = firstmin
         
         if nextStateIs not in visited:
             visited.append(nextStateIs)
@@ -315,7 +314,8 @@ class FormedInformed():
             # Adding next of the expanded node to the list 
             for state in nextOfTheExpandedNode:
                 statecost = self._cost(state, goalState)
-                frontiertoCostDict[indexCounter] = {statecost:state}
+                gn = statecost + nextStateCostIs
+                frontiertoCostDict[indexCounter] = {gn:state}
                 indexCounter += 1
                 
         else:
@@ -335,6 +335,7 @@ class FormedInformed():
                             firstmin = secDictKey_Cost
                             minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
                 nextStateIs = minstate # Here we choose the state which has lowest cost
+                nextStateCostIs = firstmin
         
             else:
                 visited.append(nextStateIs)
@@ -355,7 +356,8 @@ class FormedInformed():
                 # Adding next of the expanded node to the list 
                 for state in nextOfTheExpandedNode:
                     statecost = self._cost(state, goalState)
-                    frontiertoCostDict[indexCounter] = {statecost:state}
+                    gn = statecost + nextStateCostIs
+                    frontiertoCostDict[indexCounter] = {gn:state}
                     indexCounter += 1
                             
         return frontiertoCostDict, frontier, expanded_node, indexCounter
