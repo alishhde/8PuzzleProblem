@@ -8,7 +8,7 @@ class FormedInformed():
     def ucsAlgorithm(self):
         pass
     
-    def greedyAlgorithm(self, flag, spaceState=[], initialState=[], goalState=[], frontier=[], expanded=[], expanded_node=[], GraphSearch=True):
+    def greedyAlgorithm(self, flag=True, spaceState=[], initialState=[], goalState=[], frontier=[], expanded=[], expanded_node=[], GraphSearch=True):
         """
         This method is going to calculate the greedy algorithm. Each time you call this method,
         it define one best next node. So you must repeat calling this method to reach the Goal,
