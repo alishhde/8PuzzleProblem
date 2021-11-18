@@ -5,7 +5,7 @@ class FormedInformed():
     def aStarAlgorithm(self):
         pass
     
-    def ucsAlgorithm(self, goalState=[], currentState=[], frontier=[], visited=[], expanded=[], GraphSearch=True):
+    def ucsAlgorithm(self, goalState=[], currentState=[], frontier=[], visited=[], GraphSearch=True):
         """ This function is going to calculate the path to the goal with the UCS Algorithm.
 
         Args:
@@ -27,12 +27,16 @@ class FormedInformed():
             
         """
         
+        # Finding Frontier Of the Current Node
+        frontier = self.findNextStates(currentState, visited, frontier)
+        
+        # Calculating Cost to all next states
+        for state in frontier:
+            pass
         
         
         
-        
-        
-        return frontier, visited
+        return frontier, visited, currentState
         
     
     
@@ -171,7 +175,10 @@ class FormedInformed():
         as we are solving 8 puzzle, we describe it here,
             1- First we must find the space in the 8 puzzle.
             2- then we must find the nodes that can change their place,
-            3- then we must return these nodes that can move
+            3- then we must return these nodes that can move.
+        
+        return:
+            This functions calculates the frontier nodes and returns it
         """
         # print("Here")
         if problem == "eightPuzzle":
@@ -237,10 +244,13 @@ class FormedInformed():
                     continue
                 else:
                     frontier.append(newstate)
-            return frontier
+                    
+            return frontier # A list of all the next states
                 
     def _cost(self, state, goalState, heuristic="NumberOfMissPlace"):
-        """This method is going to compute the cost of the givven state.
+        """This method is going to compute the cost of the given state. 
+        It takes a single state as input and returns it cost.
+        
         Args:
             state (List): It is a list that consist of the 3 list in which we have the values as our problem is 8 puzzle.
             goalState (List):  It is a list that consist of the 3 list in which we have the values as our problem is 8 puzzle.
@@ -260,3 +270,20 @@ class FormedInformed():
                     if state[row][col] != goalState[row][col]:
                         missplace += 1
             return missplace
+        
+    def frontierToCost(self, frontier, goalState):
+        """This method takes the frontier which contains all the next state, as input 
+        and returns a dictionary which contains the next nodes with their cost
+
+        Args:
+            frontier ([type]): [description]
+        """
+        frontiertoCostDict = dict()
+        
+        indexCounter = 0
+        for state in frontier:
+            statecost = self._cost(state, goalState)
+            frontiertoCostDict[indexCounter] = {statecost:state}
+            indexCounter += 1
+        
+        
