@@ -5,8 +5,36 @@ class FormedInformed():
     def aStarAlgorithm(self):
         pass
     
-    def ucsAlgorithm(self):
-        pass
+    def ucsAlgorithm(self, goalState=[], currentState=[], frontier=[], visited=[], expanded=[], GraphSearch=True):
+        """ This function is going to calculate the path to the goal with the UCS Algorithm.
+
+        Args:
+            goalState (list, optional): The goal we are looking for. Defaults to [].
+            currentState (list, optional): In the first run it's initial state, then its the current state. Defaults to [].
+            frontier (list, optional): All node with the diffrent cost that are not seen yet. Defaults to [].
+            visited (list, optional): This is the node we have visited till now. we also use this variable as the expanded state, 
+            to prevent repeating it.
+            GraphSearch (bool, optional): if its True then we don't expande a node which is already expanded. 
+            
+
+        Steps:
+            1- we start from initialized state.
+            2- we use the next states method to find all next state that we can have.
+            3- we calculate the cost to those node from the initial state(Gn). 
+            4- we choose the state with the lowest cost.
+            5- if this state is not in the visited variable, then we can choose this state.
+            6- else we delete this state then choose the next lowest node.(Because of the graphSearch)
+            
+        """
+        
+        
+        
+        
+        
+        
+        return frontier, visited
+        
+    
     
     def greedyAlgorithm(self, flag=True, spaceState=[], initialState=[], goalState=[], frontier=[], expanded=[], expanded_node=[], GraphSearch=True):
         """
