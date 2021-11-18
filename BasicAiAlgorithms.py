@@ -314,6 +314,7 @@ class FormedInformed():
             frontier ([type]): [description]
         """
         if solution == "AStar":
+            
             if frontCostFlag:
                 for state in frontier:
                     heur = self._cost(state, goalState)
@@ -343,7 +344,7 @@ class FormedInformed():
                 
                 for firstDictKey in frontiertoCostDict:
                     for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
-                        if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
+                        if frontiertoCostDict[firstDictKey][secDictKey_Cost][0] == nextStateIs:
                             del frontiertoCostDict[firstDictKey][secDictKey_Cost]
                 
                 # Adding next of the expanded node to the list 
@@ -359,7 +360,7 @@ class FormedInformed():
                     # First delete the next state because it has been visited
                     for firstDictKey in frontiertoCostDict:
                         for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
-                            if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
+                            if frontiertoCostDict[firstDictKey][secDictKey_Cost][0] == nextStateIs:
                                 del frontiertoCostDict[firstDictKey][secDictKey_Cost]
                                 
                     # then choose the lowest cost from the remaining states 
@@ -385,7 +386,7 @@ class FormedInformed():
                     
                     for firstDictKey in frontiertoCostDict:
                         for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
-                            if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
+                            if frontiertoCostDict[firstDictKey][secDictKey_Cost][0] == nextStateIs:
                                 del frontiertoCostDict[firstDictKey][secDictKey_Cost]
                     
                     # Adding next of the expanded node to the list 
@@ -397,8 +398,86 @@ class FormedInformed():
                         indexCounter += 1
                                 
             return frontiertoCostDict, frontier, expanded_node, indexCounter
+        
         elif solution == "UCS":
-            pass
+            
+            if frontCostFlag:
+                for state in frontier:
+                    frontiertoCostDict[indexCounter] = {1:state}
+                    indexCounter += 1
+                
+            
+            firstmin = 10
+            for firstDictKey in frontiertoCostDict:
+                for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
+                    if secDictKey_Cost < firstmin:
+                        firstmin = secDictKey_Cost
+                        minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
+            nextStateIs = minstate # Here we choose the state which has lowest cost
+            nextStateCostIs = firstmin
+            
+            if nextStateIs not in visited:
+                visited.append(nextStateIs)
+                expanded_node = nextStateIs
+                
+                # we must compute the next state of this node and expand them(Add them to the frontiertoCostDict)
+                nextOfTheExpandedNode = self.findNextStates(expanded_node, visited, frontier)
+                
+                # we must delete this node from the frontiertoCostDict and also frontier
+                indexState = frontier.index(nextStateIs)
+                del frontier[indexState]
+                
+                for firstDictKey in frontiertoCostDict:
+                    for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
+                        if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
+                            del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                
+                # Adding next of the expanded node to the list 
+                for state in nextOfTheExpandedNode:
+                    frontiertoCostDict[indexCounter] = {nextStateCostIs+1:state}
+                    indexCounter += 1
+                    
+            else:
+                while nextStateIs in visited:
+                    
+                    # First delete the next state because it has been visited
+                    for firstDictKey in frontiertoCostDict:
+                        for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
+                            if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
+                                del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                                
+                    # then choose the lowest cost from the remaining states 
+                    firstmin = 10
+                    for firstDictKey in frontiertoCostDict:
+                        for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
+                            if secDictKey_Cost < firstmin:
+                                firstmin = secDictKey_Cost
+                                minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                    nextStateIs = minstate # Here we choose the state which has lowest cost
+                    nextStateCostIs = firstmin
+            
+                else:
+                    visited.append(nextStateIs)
+                    expanded_node = nextStateIs
+                    
+                    # we must compute the next state of this node and expand them(Add them to the frontiertoCostDict)
+                    nextOfTheExpandedNode = self.findNextStates(expanded_node, visited, frontier)
+                
+                    # we must delete this node from the frontiertoCostDict and also frontier
+                    indexState = frontier.index(nextStateIs)
+                    del frontier[indexState]
+                    
+                    for firstDictKey in frontiertoCostDict:
+                        for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
+                            if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
+                                del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                    
+                    # Adding next of the expanded node to the list 
+                    for state in nextOfTheExpandedNode:
+                        frontiertoCostDict[indexCounter] = {nextStateCostIs+1:state}
+                        indexCounter += 1
+                                
+            return frontiertoCostDict, frontier, expanded_node, indexCounter
             
     
     
