@@ -312,6 +312,12 @@ class FormedInformed():
                     if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
                         del frontiertoCostDict[firstDictKey][secDictKey_Cost]
             
+            # Adding next of the expanded node to the list 
+            for state in nextOfTheExpandedNode:
+                statecost = self._cost(state, goalState)
+                frontiertoCostDict[indexCounter] = {statecost:state}
+                indexCounter += 1
+                
         else:
             while nextStateIs in visited:
                 
@@ -345,5 +351,11 @@ class FormedInformed():
                     for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                         if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
                             del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                
+                # Adding next of the expanded node to the list 
+                for state in nextOfTheExpandedNode:
+                    statecost = self._cost(state, goalState)
+                    frontiertoCostDict[indexCounter] = {statecost:state}
+                    indexCounter += 1
                             
         return frontiertoCostDict, frontier, expanded_node, indexCounter
