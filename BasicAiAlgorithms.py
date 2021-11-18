@@ -26,12 +26,12 @@ class FormedInformed():
             
             # Calculating Cost for all of the frontier nodes
             indexCounter = 0
-            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited)
+            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, solution="AStar")
             
         else:
             # Because frontier has been calculated in the last time so we dont need to calculated it again
             # Calculating Cost for all of the frontier nodes
-            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict=frontierWithCost)
+            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict=frontierWithCost, solution="AStar")
         
         
         return frontier, visited, currentState
@@ -63,14 +63,14 @@ class FormedInformed():
             
             # Calculating Cost for all of the frontier nodes
             indexCounter = 0
-            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited)
+            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, solution="UCS")
             
         else:
             # Because frontier has been calculated in the last time so we dont need to calculated it again
             # Calculating Cost for all of the frontier nodes
-            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict=frontierWithCost)
+            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict=frontierWithCost, solution="UCS")
         
-        
+
         return frontier, visited, currentState
         
     
@@ -306,78 +306,37 @@ class FormedInformed():
                         missplace += 1
             return missplace
         
-    def frontierToCost(self, indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict={}):
+    def frontierToCost(self, indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict={}, solution="AStar"):
         """This method takes the frontier which contains all the next state, as input 
         and returns a dictionary which contains the next nodes with their cost
 
         Args:
             frontier ([type]): [description]
         """
-        if frontCostFlag:
-            for state in frontier:
-                heur = self._cost(state, goalState)
-                frontiertoCostDict[indexCounter] = {heur:(state, 1)}
-                indexCounter += 1
+        if solution == "AStar":
+            if frontCostFlag:
+                for state in frontier:
+                    heur = self._cost(state, goalState)
+                    frontiertoCostDict[indexCounter] = {heur:(state, 1)}
+                    indexCounter += 1
+                
             
-        
-        firstmin = 10
-        for firstDictKey in frontiertoCostDict:
-            for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
-                if secDictKey_Cost < firstmin:
-                    firstmin = secDictKey_Cost
-                    minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
-        nextStateIs = minstate[0] # Here we choose the state which has lowest cost
-        nextStateCostIs = minstate[1]
-        
-        if nextStateIs not in visited:
-            visited.append(nextStateIs)
-            expanded_node = nextStateIs
-            
-            # we must compute the next state of this node and expand them(Add them to the frontiertoCostDict)
-            nextOfTheExpandedNode = self.findNextStates(expanded_node, visited, frontier)
-            
-            # we must delete this node from the frontiertoCostDict and also frontier
-            indexState = frontier.index(nextStateIs)
-            del frontier[indexState]
-            
+            firstmin = 10
             for firstDictKey in frontiertoCostDict:
                 for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
-                    if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
-                        del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                    if secDictKey_Cost < firstmin:
+                        firstmin = secDictKey_Cost
+                        minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
+            nextStateIs = minstate[0] # Here we choose the state which has lowest cost
+            nextStateCostIs = minstate[1]
             
-            # Adding next of the expanded node to the list 
-            for state in nextOfTheExpandedNode:
-                heurisCost = self._cost(state, goalState)
-                Fn = gn + heurisCost
-                frontiertoCostDict[indexCounter] = {Fn:(state, nextStateCostIs+1)}
-                indexCounter += 1
-                
-        else:
-            while nextStateIs in visited:
-                
-                # First delete the next state because it has been visited
-                for firstDictKey in frontiertoCostDict:
-                    for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
-                        if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
-                            del frontiertoCostDict[firstDictKey][secDictKey_Cost]
-                            
-                # then choose the lowest cost from the remaining states 
-                firstmin = 10
-                for firstDictKey in frontiertoCostDict:
-                    for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
-                        if secDictKey_Cost < firstmin:
-                            firstmin = secDictKey_Cost
-                            minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
-                nextStateIs = minstate[0] # Here we choose the state which has lowest cost
-                nextStateCostIs = minstate[1]
-        
-            else:
+            if nextStateIs not in visited:
                 visited.append(nextStateIs)
                 expanded_node = nextStateIs
                 
                 # we must compute the next state of this node and expand them(Add them to the frontiertoCostDict)
                 nextOfTheExpandedNode = self.findNextStates(expanded_node, visited, frontier)
-            
+                
                 # we must delete this node from the frontiertoCostDict and also frontier
                 indexState = frontier.index(nextStateIs)
                 del frontier[indexState]
@@ -390,11 +349,56 @@ class FormedInformed():
                 # Adding next of the expanded node to the list 
                 for state in nextOfTheExpandedNode:
                     heurisCost = self._cost(state, goalState)
-                    gn = self.realCost(realCounter)
                     Fn = gn + heurisCost
                     frontiertoCostDict[indexCounter] = {Fn:(state, nextStateCostIs+1)}
                     indexCounter += 1
-                            
-        return frontiertoCostDict, frontier, expanded_node, indexCounter
+                    
+            else:
+                while nextStateIs in visited:
+                    
+                    # First delete the next state because it has been visited
+                    for firstDictKey in frontiertoCostDict:
+                        for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
+                            if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
+                                del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                                
+                    # then choose the lowest cost from the remaining states 
+                    firstmin = 10
+                    for firstDictKey in frontiertoCostDict:
+                        for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
+                            if secDictKey_Cost < firstmin:
+                                firstmin = secDictKey_Cost
+                                minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                    nextStateIs = minstate[0] # Here we choose the state which has lowest cost
+                    nextStateCostIs = minstate[1]
+            
+                else:
+                    visited.append(nextStateIs)
+                    expanded_node = nextStateIs
+                    
+                    # we must compute the next state of this node and expand them(Add them to the frontiertoCostDict)
+                    nextOfTheExpandedNode = self.findNextStates(expanded_node, visited, frontier)
+                
+                    # we must delete this node from the frontiertoCostDict and also frontier
+                    indexState = frontier.index(nextStateIs)
+                    del frontier[indexState]
+                    
+                    for firstDictKey in frontiertoCostDict:
+                        for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
+                            if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
+                                del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                    
+                    # Adding next of the expanded node to the list 
+                    for state in nextOfTheExpandedNode:
+                        heurisCost = self._cost(state, goalState)
+                        gn = self.realCost(realCounter)
+                        Fn = gn + heurisCost
+                        frontiertoCostDict[indexCounter] = {Fn:(state, nextStateCostIs+1)}
+                        indexCounter += 1
+                                
+            return frontiertoCostDict, frontier, expanded_node, indexCounter
+        elif solution == "UCS":
+            pass
+            
     
     
