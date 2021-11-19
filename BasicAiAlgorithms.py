@@ -1,6 +1,6 @@
 class FormedInformed():
     
-    def aStarAlgorithm(self, flag=True, goalState=[], currentState=[], frontier=[], visited=[], GraphSearch=True):
+    def aStarAlgorithm(self, flag=True, frontierWithCost={},  indexCounter=0, goalState=[], currentState=[], frontier=[], visited=[], GraphSearch=True):
         """ This function is going to calculate the path to the goal with the A* Algorithm.
         
         Args:
@@ -25,16 +25,15 @@ class FormedInformed():
             frontier = self.findNextStates(currentState, visited, frontier)
             
             # Calculating Cost for all of the frontier nodes
-            indexCounter = 0
             frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, solution="AStar")
-            
+
         else:
             # Because frontier has been calculated in the last time so we dont need to calculated it again
             # Calculating Cost for all of the frontier nodes
+            
             frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict=frontierWithCost, solution="AStar")
         
-        
-        return frontier, visited, currentState
+        return frontier, visited, currentState, indexCounter, frontierWithCost
     
     def ucsAlgorithm(self, flag=True, goalState=[], currentState=[], frontier=[], visited=[], GraphSearch=True):
         """ This function is going to calculate the path to the goal with the UCS Algorithm. as all we do is similar to
@@ -342,15 +341,20 @@ class FormedInformed():
                 indexState = frontier.index(nextStateIs)
                 del frontier[indexState]
                 
+                ToRemoveValue = []
                 for firstDictKey in frontiertoCostDict:
                     for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                         if frontiertoCostDict[firstDictKey][secDictKey_Cost][0] == nextStateIs:
-                            del frontiertoCostDict[firstDictKey][secDictKey_Cost]
-                
+                            ToRemoveValue.append((firstDictKey, secDictKey_Cost))
+                            # del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                            
+                for removeState in ToRemoveValue:
+                    del frontiertoCostDict[removeState[0]][removeState[1]]
+                    
                 # Adding next of the expanded node to the list 
                 for state in nextOfTheExpandedNode:
                     heurisCost = self._cost(state, goalState)
-                    Fn = gn + heurisCost
+                    Fn = nextStateCostIs + heurisCost
                     frontiertoCostDict[indexCounter] = {Fn:(state, nextStateCostIs+1)}
                     indexCounter += 1
                     
@@ -358,11 +362,16 @@ class FormedInformed():
                 while nextStateIs in visited:
                     
                     # First delete the next state because it has been visited
+                    ToRemoveValue = []
                     for firstDictKey in frontiertoCostDict:
                         for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                             if frontiertoCostDict[firstDictKey][secDictKey_Cost][0] == nextStateIs:
-                                del frontiertoCostDict[firstDictKey][secDictKey_Cost]
-                                
+                                ToRemoveValue.append((firstDictKey, secDictKey_Cost))
+                                # del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+
+                    for removeState in ToRemoveValue:
+                        del frontiertoCostDict[removeState[0]][removeState[1]]
+                    
                     # then choose the lowest cost from the remaining states 
                     firstmin = 10
                     for firstDictKey in frontiertoCostDict:
@@ -384,16 +393,20 @@ class FormedInformed():
                     indexState = frontier.index(nextStateIs)
                     del frontier[indexState]
                     
+                    ToRemoveValue = []
                     for firstDictKey in frontiertoCostDict:
                         for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                             if frontiertoCostDict[firstDictKey][secDictKey_Cost][0] == nextStateIs:
-                                del frontiertoCostDict[firstDictKey][secDictKey_Cost]
-                    
+                                ToRemoveValue.append((firstDictKey, secDictKey_Cost))
+                                # del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                                
+                    for removeState in ToRemoveValue:
+                        del frontiertoCostDict[removeState[0]][removeState[1]]
+                        
                     # Adding next of the expanded node to the list 
                     for state in nextOfTheExpandedNode:
                         heurisCost = self._cost(state, goalState)
-                        gn = self.realCost(realCounter)
-                        Fn = gn + heurisCost
+                        Fn = nextStateCostIs + heurisCost
                         frontiertoCostDict[indexCounter] = {Fn:(state, nextStateCostIs+1)}
                         indexCounter += 1
                                 
@@ -427,10 +440,15 @@ class FormedInformed():
                 indexState = frontier.index(nextStateIs)
                 del frontier[indexState]
                 
+                ToRemoveValue = []
                 for firstDictKey in frontiertoCostDict:
                     for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                         if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
-                            del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                            ToRemoveValue.append((firstDictKey, secDictKey_Cost))
+                            # del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                            
+                for removeState in ToRemoveValue:
+                    del frontiertoCostDict[removeState[0]][removeState[1]]
                 
                 # Adding next of the expanded node to the list 
                 for state in nextOfTheExpandedNode:
@@ -441,11 +459,16 @@ class FormedInformed():
                 while nextStateIs in visited:
                     
                     # First delete the next state because it has been visited
+                    ToRemoveValue = []
                     for firstDictKey in frontiertoCostDict:
                         for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                             if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
-                                del frontiertoCostDict[firstDictKey][secDictKey_Cost]
-                                
+                                ToRemoveValue.append((firstDictKey, secDictKey_Cost))
+                                # del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                    
+                    for removeState in ToRemoveValue:
+                        del frontiertoCostDict[removeState[0]][removeState[1]]
+                    
                     # then choose the lowest cost from the remaining states 
                     firstmin = 10
                     for firstDictKey in frontiertoCostDict:
@@ -467,10 +490,15 @@ class FormedInformed():
                     indexState = frontier.index(nextStateIs)
                     del frontier[indexState]
                     
+                    ToRemoveValue = []
                     for firstDictKey in frontiertoCostDict:
                         for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                             if frontiertoCostDict[firstDictKey][secDictKey_Cost] == nextStateIs:
-                                del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                                ToRemoveValue.append((firstDictKey, secDictKey_Cost))
+                                # del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                                
+                    for removeState in ToRemoveValue:
+                        del frontiertoCostDict[removeState[0]][removeState[1]]
                     
                     # Adding next of the expanded node to the list 
                     for state in nextOfTheExpandedNode:

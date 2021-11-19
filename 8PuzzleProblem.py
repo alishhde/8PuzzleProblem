@@ -21,7 +21,9 @@ cot = 0
 while goal != current:
     
     if runflag:
-        front, expndd, expndd_node = algo.greedyAlgorithm(initialState=current, goalState=goal)
+        # front, expndd, expndd_node = algo.greedyAlgorithm(initialState=current, goalState=goal)
+        # front, expndd, expndd_node,indexCount, frontierWithCos = algo.aStarAlgorithm(currentState=initial_state, goalState=goal)
+        front, expndd, expndd_node = algo.ucsAlgorithm(currentState=initial_state, goalState=goal)
         
         print("Goal:")
         for i in goal:
@@ -31,7 +33,10 @@ while goal != current:
             print(i)
         runflag = False
     else:
-        front, expndd, expndd_node = algo.greedyAlgorithm(flag=False, frontier=front, goalState=goal, expanded=expndd, expanded_node=expndd_node)
+        # front, expndd, expndd_node = algo.greedyAlgorithm(flag=False, frontier=front, goalState=goal, expanded=expndd, expanded_node=expndd_node)
+        # front, expndd, expndd_node, indexCount, frontierWithCos = algo.aStarAlgorithm(flag=False, frontierWithCost=frontierWithCos, indexCounter=indexCount, frontier=front, goalState=goal, visited=expndd, currentState=expndd_node)
+        front, expndd, expndd_node = algo.ucsAlgorithm(flag=False, frontier=front, goalState=goal, visited=expndd, currentState=expndd_node)
+        
         print("\nFrom now we are here ....\n")
         print("Goal:")
         for i in goal:
