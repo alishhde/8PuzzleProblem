@@ -18,20 +18,25 @@ class FormedInformed():
             4- we choose the state with the lowest cost.
             5- if this state is not in the visited variable, then we can choose this state.
             6- else we delete this state then choose the next lowest node.(Because of the graphSearch)
-            
         """
         if flag:
             # Finding Frontier Of the Current Node
+            visited.append(currentState)
             frontier = self.findNextStates(currentState, visited, frontier)
             
             # Calculating Cost for all of the frontier nodes
             frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, solution="AStar")
 
+            # print("This is frontier: ", frontier)
+            # print("This is frontierWithCost: ", frontierWithCost)
+            # print("This is expanded_node: ", expanded_node)
+            # print("This is indexCounter: ", indexCounter)
+        
         else:
             # Because frontier has been calculated in the last time so we dont need to calculated it again
             # Calculating Cost for all of the frontier nodes
             
-            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict=frontierWithCost, solution="AStar")
+            frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, frontCostFlag=False, frontiertoCostDict=frontierWithCost, solution="AStar")
         
         return frontier, visited, currentState, indexCounter, frontierWithCost
     
@@ -110,6 +115,7 @@ class FormedInformed():
                     return False    # If initial state is empty
                 else:
                     # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
+                    frontier = []
                     frontier = self.findNextStates(expanded_node, expanded, frontier) # here we are expanding node with lowest cost
                     
                     # now we must find these node's cost and choose the node that has lowest cost
@@ -146,7 +152,7 @@ class FormedInformed():
                         del frontier[indexState]
                         
                     else:
-                        print("This state is in the expanded, \n", nextStateIs, "\n\n\n")
+                        print("This else has not been checked, \n", nextStateIs, "\n\n\n")
                         while nextStateIs in expanded:
                             del heuristicValues[min(heuristicValues.keys())]
                             nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
@@ -156,26 +162,19 @@ class FormedInformed():
                             indexState = frontier.index(nextStateIs)
                             del frontier[indexState]
                 
-                    print("\n\n")
-                    print("After This is frontier", frontier)
-                    print("After This is expanded", expanded)
-                    print("before This is expanded_node node", expanded_node)
+                    # print("\n\n")
+                    # print("After This is frontier", frontier)
+                    # print("After This is expanded", expanded)
+                    # print("before This is expanded_node node", expanded_node)
                     
                     return frontier, expanded, expanded_node
                 
-    ########################################### It is all great till here ################################################
     
             else:
             
                 # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
+                frontier = []
                 frontier = self.findNextStates(expanded_node, expanded, frontier) # here we are expanding node with lowest cost
-                
-                print("\n\n")
-                print("After This is frontier", frontier)
-                print("After This is expanded", expanded)
-                print("before This is expanded_node node", expanded_node)
-                print("\n\n")
-                raise KeyError
             
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
@@ -189,11 +188,17 @@ class FormedInformed():
                     dictOfStates[frontier_index] = heuristicValues
                     heuristicValues = {}
                     frontier_index += 1
-                    
-                # print("This is dictOfStates dictionary: ", dictOfStates)
                 
+                # print("\n\n")
+                # print("After This is heuristicValues", heuristicValues)
+                # print("After This is dictOfStates", dictOfStates)
+                # print("\n\n")
+                # raise KeyError
+            
+            
                 # Computing the first minimum cost
                 firstmin = 10
+                minstate = list()
                 for firstDictKey in dictOfStates:
                     for secDictKey_Cost in dictOfStates[firstDictKey]:
                         if secDictKey_Cost < firstmin:
@@ -201,12 +206,29 @@ class FormedInformed():
                             minstate = dictOfStates[firstDictKey][secDictKey_Cost]
                 nextStateIs = minstate # Here we choose the state which has lowest cost
                 
-                if nextStateIs not in expanded:
+                # print("\n\n")
+                # print("the first minimum cost", nextStateIs)
+                # print("firstmin", firstmin)
+                # print("\n\n")
+                # raise KeyError
+            
+
+                # print("\n\n")
+                # print("Before This is expanded states", expanded)
+                # print("Before This is expanded_node", expanded_node)
+                # print("\n\n")
+            
+                if nextStateIs not in expanded and nextStateIs != []:
                     expanded.append(nextStateIs)
                     expanded_node = nextStateIs
                     indexState = frontier.index(nextStateIs)
                     del frontier[indexState]
+                    
+                elif nextStateIs == []:
+                    print("all states has been checked")
+                    raise KeyError
                 else:
+                    print("This else has not been checked, \n", nextStateIs, "\n\n\n")
                     while nextStateIs in expanded:
                         del heuristicValues[min(heuristicValues.keys())]
                         # print("line 98, this is heuristicValues.keys()", heuristicValues.keys())
@@ -217,10 +239,19 @@ class FormedInformed():
                         indexState = frontier.index(nextStateIs)
                         del frontier[indexState]
                         
+                # print("\n\n")
+                # print("After This is expanded states", expanded)
+                # print("After This is expanded_node", expanded_node)
+                # print("\n\n")
+                # raise KeyError
+                        
                 return frontier, expanded, expanded_node
             
         else: # When we are using Tree Search algorithm, and we want to also check the nodes that are expanded.
             pass
+    
+    ########################################### It is all great till here ################################################
+    
     
     def findNextStates(self, currentState, expanded, frontier, problem="eightPuzzle"):
         """
@@ -287,8 +318,9 @@ class FormedInformed():
             next_states = [] # each value of this list is complete state
             # print("This is line 162 availableMoveIndexForSpace: ", availableMoveIndexForSpace)
             
-            frontier = [] # This line resets frontier so we dont have the frontier of the last state we passed
-            
+            # frontier = [] # This line resets frontier so we dont have the frontier of the last state we passed
+            # we did the last line in the greedy itself
+            self.newnodes = []
             for moveIndex in availableMoveIndexForSpace:
                 # Here we must change the space and the number
                 newstate = []
@@ -299,6 +331,7 @@ class FormedInformed():
                 if newstate in expanded or newstate in frontier:
                     continue
                 else:
+                    self.newnodes.append(newstate)
                     frontier.append(newstate)
             # print("This is frontier", frontier)
             
@@ -337,51 +370,86 @@ class FormedInformed():
         """
         if solution == "AStar":
             
+            
+            # Calculating heuristic and real cost
             if frontCostFlag:
                 for state in frontier:
                     heur = self._cost(state, goalState)
                     frontiertoCostDict[indexCounter] = {heur:(state, 1)}
                     indexCounter += 1
-                
             
+            # print("This is frontier: ", frontier)
+            # print("This is frontiertoCostDict: ", frontiertoCostDict)
+            # raise ValueError
+        
+        
+            # Choosing the minimum
             firstmin = 10
             for firstDictKey in frontiertoCostDict:
                 for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                     if secDictKey_Cost < firstmin:
                         firstmin = secDictKey_Cost
                         minstate = frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                        
             nextStateIs = minstate[0] # Here we choose the state which has lowest cost
             nextStateCostIs = minstate[1]
             
+            print("this is nextstate ", nextStateIs)
+            
+            index = frontier.index(nextStateIs)
+            del frontier[0]
+            
+            # print("This is frontier after deleted visited: ", frontier)
+            # print("This is nextStateIs: ", nextStateIs)
+            # raise ValueError
+        
+############################### AALLL Greate ##########################
+            # print("This is visited: ", visited)
+            # print("This is nextStateIs: ", nextStateIs)
+        
             if nextStateIs not in visited:
                 visited.append(nextStateIs)
                 expanded_node = nextStateIs
-                
                 # we must compute the next state of this node and expand them(Add them to the frontiertoCostDict)
                 nextOfTheExpandedNode = self.findNextStates(expanded_node, visited, frontier)
-                
+                # print("nextOfTheExpandedNode ", nextOfTheExpandedNode)
                 # we must delete this node from the frontiertoCostDict and also frontier
-                indexState = frontier.index(nextStateIs)
-                del frontier[indexState]
+                # indexState = frontier.index(nextStateIs)
+                # del frontier[indexState]
+                
+                # print("This is visited: ", visited)
+                # print("This is frontier: ", frontier)
+                # print("This is self.newnodes: ", self.newnodes)
+                # print("This is nextOfTheExpandedNode: ", nextOfTheExpandedNode)
+                # raise ValueError
                 
                 ToRemoveValue = []
                 for firstDictKey in frontiertoCostDict:
                     for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                         if frontiertoCostDict[firstDictKey][secDictKey_Cost][0] == nextStateIs:
-                            ToRemoveValue.append((firstDictKey, secDictKey_Cost))
-                            # del frontiertoCostDict[firstDictKey][secDictKey_Cost]
+                            ToRemoveValue.append(firstDictKey)
+                            # del frontiertoCostDict[firstDictKey][secDictKey_Cost] # we did it in the next line
                             
                 for removeState in ToRemoveValue:
-                    del frontiertoCostDict[removeState[0]][removeState[1]]
-                    
+                    del frontiertoCostDict[removeState]
+
+                print(frontiertoCostDict, "\n\n\n")
+                # raise ValueError
+                
                 # Adding next of the expanded node to the list 
-                for state in nextOfTheExpandedNode:
+                for state in self.newnodes:
                     heurisCost = self._cost(state, goalState)
                     Fn = nextStateCostIs + heurisCost
                     frontiertoCostDict[indexCounter] = {Fn:(state, nextStateCostIs+1)}
                     indexCounter += 1
-                    
+                
+                print(frontiertoCostDict, "\n\n\n")
+                raise ValueError
+                
             else:
+                print("This else has not been checked")
+                raise ValueError
+                
                 while nextStateIs in visited:
                     
                     # First delete the next state because it has been visited
@@ -389,11 +457,11 @@ class FormedInformed():
                     for firstDictKey in frontiertoCostDict:
                         for secDictKey_Cost in frontiertoCostDict[firstDictKey]:
                             if frontiertoCostDict[firstDictKey][secDictKey_Cost][0] == nextStateIs:
-                                ToRemoveValue.append((firstDictKey, secDictKey_Cost))
+                                ToRemoveValue.append(firstDictKey)
                                 # del frontiertoCostDict[firstDictKey][secDictKey_Cost]
 
                     for removeState in ToRemoveValue:
-                        del frontiertoCostDict[removeState[0]][removeState[1]]
+                        del frontiertoCostDict[removeState]
                     
                     # then choose the lowest cost from the remaining states 
                     firstmin = 10
@@ -413,8 +481,8 @@ class FormedInformed():
                     nextOfTheExpandedNode = self.findNextStates(expanded_node, visited, frontier)
                 
                     # we must delete this node from the frontiertoCostDict and also frontier
-                    indexState = frontier.index(nextStateIs)
-                    del frontier[indexState]
+                    # indexState = frontier.index(nextStateIs)
+                    # del frontier[indexState]
                     
                     ToRemoveValue = []
                     for firstDictKey in frontiertoCostDict:
@@ -432,8 +500,7 @@ class FormedInformed():
                         Fn = nextStateCostIs + heurisCost
                         frontiertoCostDict[indexCounter] = {Fn:(state, nextStateCostIs+1)}
                         indexCounter += 1
-                                
-            return frontiertoCostDict, frontier, expanded_node, indexCounter
+            return frontiertoCostDict, nextOfTheExpandedNode, expanded_node, indexCounter
         
         elif solution == "UCS":
             
