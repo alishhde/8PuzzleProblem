@@ -35,7 +35,7 @@ class FormedInformed():
         
         return frontier, visited, currentState, indexCounter, frontierWithCost
     
-    def ucsAlgorithm(self, flag=True, goalState=[], currentState=[], frontier=[], visited=[], GraphSearch=True):
+    def ucsAlgorithm(self, flag=True, frontierWithCost={},  indexCounter=0, goalState=[], currentState=[], frontier=[], visited=[], GraphSearch=True):
         """ This function is going to calculate the path to the goal with the UCS Algorithm. as all we do is similar to
         A* algorithm so we have all of that function with a little change in the self.frontierToCost() method
         
@@ -70,7 +70,7 @@ class FormedInformed():
             frontierWithCost, frontier, expanded_node, indexCounter = self.frontierToCost(indexCounter, frontier, goalState, visited, frontCostFlag=True, frontiertoCostDict=frontierWithCost, solution="UCS")
         
 
-        return frontier, visited, currentState
+        return frontier, visited, currentState, indexCounter, frontierWithCost
         
     
     
@@ -115,17 +115,17 @@ class FormedInformed():
                     # now we must find these node's cost and choose the node that has lowest cost
                     heuristicValues = dict()
                     dictOfStates = dict()
-                    print("This is frontier line 51 : ", frontier)
+                    # print("This is frontier line 51 : ", frontier)
                     frontier_index = 0
                     for state in frontier:
-                        print("This is current state of frontier line 52", state)
+                        # print("This is current state of frontier line 52", state)
                         keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                         heuristicValues[int(keyIsCost)] = state
                         dictOfStates[frontier_index] = heuristicValues
                         heuristicValues = {}
                         frontier_index += 1
                         
-                    print("This is dictOfStates dictionary: ", dictOfStates)
+                    # print("This is dictOfStates dictionary: ", dictOfStates)
                     
                     # Computing the first minimum cost
                     firstmin = 10
@@ -162,17 +162,17 @@ class FormedInformed():
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
                 dictOfStates = dict()
-                print("This is frontier line 51 : ", frontier)
+                # print("This is frontier line 51 : ", frontier)
                 frontier_index = 0
                 for state in frontier:
-                    print("This is current state of frontier line 52", state)
+                    # print("This is current state of frontier line 52", state)
                     keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
                     heuristicValues[int(keyIsCost)] = state
                     dictOfStates[frontier_index] = heuristicValues
                     heuristicValues = {}
                     frontier_index += 1
                     
-                print("This is dictOfStates dictionary: ", dictOfStates)
+                # print("This is dictOfStates dictionary: ", dictOfStates)
                 
                 # Computing the first minimum cost
                 firstmin = 10
