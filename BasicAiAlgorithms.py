@@ -105,28 +105,25 @@ class FormedInformed():
                 expanded_node = list()
                 expanded.append(initialState)
                 expanded_node = initialState
+                
                 if frontier == None:
                     return False    # If initial state is empty
                 else:
                     # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
                     frontier = self.findNextStates(expanded_node, expanded, frontier) # here we are expanding node with lowest cost
-                    # print(frontier, "Thisis line 47", sep="===>" )
                     
                     # now we must find these node's cost and choose the node that has lowest cost
                     heuristicValues = dict()
                     dictOfStates = dict()
-                    # print("This is frontier line 51 : ", frontier)
                     frontier_index = 0
                     for state in frontier:
-                        # print("This is current state of frontier line 52", state)
                         keyIsCost = self._cost(state, goalState, heuristic="NumberOfMissPlace")
+                        # print("this state \n", state, "have this cost: ", keyIsCost)
                         heuristicValues[int(keyIsCost)] = state
                         dictOfStates[frontier_index] = heuristicValues
                         heuristicValues = {}
                         frontier_index += 1
                         
-                    # print("This is dictOfStates dictionary: ", dictOfStates)
-                    
                     # Computing the first minimum cost
                     firstmin = 10
                     for firstDictKey in dictOfStates:
@@ -135,6 +132,10 @@ class FormedInformed():
                                 firstmin = secDictKey_Cost
                                 minstate = dictOfStates[firstDictKey][secDictKey_Cost]
                     nextStateIs = minstate # Here we choose the state which has lowest cost
+                    
+                    # print("before This is frontier", frontier)
+                    # print("before This is expanded", expanded)
+                    # print("before This is expanded_node node", expanded_node)
                     
                     if nextStateIs not in expanded:
                         expanded.append(nextStateIs)
@@ -145,6 +146,7 @@ class FormedInformed():
                         del frontier[indexState]
                         
                     else:
+                        print("This state is in the expanded, \n", nextStateIs, "\n\n\n")
                         while nextStateIs in expanded:
                             del heuristicValues[min(heuristicValues.keys())]
                             nextStateIs = heuristicValues[min(heuristicValues.keys())] # Here we choose the state which has lowest cost
@@ -153,12 +155,28 @@ class FormedInformed():
                             expanded_node = nextStateIs
                             indexState = frontier.index(nextStateIs)
                             del frontier[indexState]
-                            
+                
+                    print("\n\n")
+                    print("After This is frontier", frontier)
+                    print("After This is expanded", expanded)
+                    print("before This is expanded_node node", expanded_node)
+                    
                     return frontier, expanded, expanded_node
+                
+    ########################################### It is all great till here ################################################
+    
             else:
+            
                 # next_states is consist of the nodes that can move, we must choos the node which has the lowest cost as we are in greedy algoithm
                 frontier = self.findNextStates(expanded_node, expanded, frontier) # here we are expanding node with lowest cost
                 
+                print("\n\n")
+                print("After This is frontier", frontier)
+                print("After This is expanded", expanded)
+                print("before This is expanded_node node", expanded_node)
+                print("\n\n")
+                raise KeyError
+            
                 # now we must find these node's cost and choose the node that has lowest cost
                 heuristicValues = dict()
                 dictOfStates = dict()
@@ -231,15 +249,16 @@ class FormedInformed():
             columnCounter = 0
             flag = False
             for eachrow in currentState:
-                for value in eachrow:
-                    if value == " ":
+                for col in eachrow:
+                    if col == " ":
                         """
                             Now we must find this value's index
                         """
                         spaceIndex = [rowCounter, columnCounter]
                         flag = True # says we must to break
                         break
-                    columnCounter += 1
+                    else:
+                        columnCounter += 1
                 if flag:
                     flag = False
                     break
@@ -250,35 +269,39 @@ class FormedInformed():
             # 2- In the next lines we are going to add all the possible state's index
             availableMoveIndexForSpace = list()
             domain = [0, 1, 2]
-            if (rowCounter - 1) in domain:
-                availableMoveIndexForSpace.append((rowCounter - 1, columnCounter))
+            if (spaceIndex[0] - 1) in domain:
+                availableMoveIndexForSpace.append((spaceIndex[0] - 1, spaceIndex[1]))
 
-            if (rowCounter + 1) in domain:
-                availableMoveIndexForSpace.append((rowCounter + 1, columnCounter))
+            if (spaceIndex[0] + 1) in domain:
+                availableMoveIndexForSpace.append((spaceIndex[0] + 1, spaceIndex[1]))
 
-            if (columnCounter - 1) in domain:
-                availableMoveIndexForSpace.append((rowCounter, columnCounter - 1))
+            if (spaceIndex[1] - 1) in domain:
+                availableMoveIndexForSpace.append((spaceIndex[0], spaceIndex[1] - 1))
                 
-            if (columnCounter + 1) in domain:
-                availableMoveIndexForSpace.append((rowCounter, columnCounter + 1))    
+            if (spaceIndex[1] + 1) in domain:
+                availableMoveIndexForSpace.append((spaceIndex[0], spaceIndex[1] + 1))    
             # print(availableMoveIndexForSpace, "This is available move ", sep=" ==> ")
             
             # 3- Now we must create those states and return all thenext states we have
             from copy import deepcopy
             next_states = [] # each value of this list is complete state
             # print("This is line 162 availableMoveIndexForSpace: ", availableMoveIndexForSpace)
+            
+            frontier = [] # This line resets frontier so we dont have the frontier of the last state we passed
+            
             for moveIndex in availableMoveIndexForSpace:
                 # Here we must change the space and the number
                 newstate = []
                 newstate = deepcopy(currentState)
                 # print("this is 166", moveIndex[0], moveIndex[1])
-                newstate[rowCounter][columnCounter], newstate[moveIndex[0]][moveIndex[1]] = newstate[moveIndex[0]][moveIndex[1]], newstate[rowCounter][columnCounter]
+                newstate[spaceIndex[0]][spaceIndex[1]], newstate[moveIndex[0]][moveIndex[1]] = newstate[moveIndex[0]][moveIndex[1]], newstate[spaceIndex[0]][spaceIndex[1]]
                 
                 if newstate in expanded or newstate in frontier:
                     continue
                 else:
                     frontier.append(newstate)
-                    
+            # print("This is frontier", frontier)
+            
             return frontier # A list of all the next states
                 
     def _cost(self, state, goalState, heuristic="NumberOfMissPlace"):

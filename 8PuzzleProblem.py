@@ -13,15 +13,17 @@ initial_state = [
                     [7, 8, 5]
                 ] 
 
-current = deepcopy(initial_state)
+for i in initial_state:
+    print(i)
+
 algo = bi.FormedInformed()
 runflag = True
 cot = 0
 
-while goal != current:
+while goal != initial_state:
     
-    if runflag:
-        front, expndd, expndd_node = algo.greedyAlgorithm(initialState=current, goalState=goal)
+    if runflag: # Only in the first run
+        front, expndd, expndd_node = algo.greedyAlgorithm(initialState=initial_state, goalState=goal)
         # front, expndd, expndd_node,indexCount, frontierWithCos = algo.aStarAlgorithm(currentState=initial_state, goalState=goal)
         # front, expndd, expndd_node,indexCount, frontierWithCos = algo.ucsAlgorithm(currentState=initial_state, goalState=goal)
         
